@@ -43,7 +43,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // API Configuration
-const API_BASE_URL = 'http://localhost:3000/api';
+// API Configuration
+// Use relative path so it works on both localhost and production
+const API_BASE_URL = '/api';
 
 // File Upload Handler Class
 class FileUploader {
