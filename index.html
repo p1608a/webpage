@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Free online PDF tools - Merge, split, compress, convert PDFs and more. Easy to use, no registration required.">
+    <title>PDF Tools - Free Online PDF Editor & Converter</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles/main.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23e5322d'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>P</text></svg>">
+</head>
+
+<body>
+    <!-- Animated Background -->
+    <div class="bg-gradient"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">📄</span>
+                <span>PDF Tools</span>
+            </a>
+
+            <nav class="nav" id="mainNav">
+                <div class="nav-dropdown">
+                    <a href="#" class="nav-link">All Tools ▾</a>
+                    <div class="nav-dropdown-content">
+                        <a href="pages/merge.html" class="nav-dropdown-item">Merge PDF</a>
+                        <a href="pages/split.html" class="nav-dropdown-item">Split PDF</a>
+                        <a href="pages/compress.html" class="nav-dropdown-item">Compress PDF</a>
+                        <a href="pages/pdf-to-jpg.html" class="nav-dropdown-item">PDF to JPG</a>
+                        <a href="pages/jpg-to-pdf.html" class="nav-dropdown-item">JPG to PDF</a>
+                        <a href="pages/rotate.html" class="nav-dropdown-item">Rotate PDF</a>
+                        <a href="pages/watermark.html" class="nav-dropdown-item">Watermark</a>
+                        <a href="pages/word-to-pdf.html" class="nav-dropdown-item">Word to PDF</a>
+                        <a href="pages/protect.html" class="nav-dropdown-item">Protect PDF</a>
+                        <a href="pages/unlock.html" class="nav-dropdown-item">Unlock PDF</a>
+                    </div>
+                </div>
+                <a href="#tools" class="nav-link">Popular</a>
+                <a href="#" class="nav-link">About</a>
+            </nav>
+
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+                ☰
+            </button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-badge">
+                <span class="hero-badge-dot"></span>
+                100% Free • No Registration
+            </div>
+
+            <h1>Every PDF Tool You Need</h1>
+
+            <p class="hero-subtitle">
+                Merge, split, compress, convert, rotate, unlock and watermark PDFs with just a few clicks. All tools are
+                free and easy to use!
+            </p>
+
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="#tools" class="btn btn-primary btn-lg">
+                    Explore Tools
+                </a>
+                <a href="pages/merge.html" class="btn btn-secondary btn-lg">
+                    Start with Merge
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tools Grid Section -->
+    <section class="tools-section" id="tools">
+        <div class="container">
+            <div class="section-header">
+                <h2>All PDF Tools</h2>
+                <p>Everything you need to work with PDFs in one place</p>
+            </div>
+
+            <div class="tools-grid">
+                <!-- Merge PDF -->
+                <a href="pages/merge.html" class="tool-card" data-color="red">
+                    <div class="tool-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
+                        </svg>
+                    </div>
+                    <h3>Merge PDF</h3>
+                    <p>Combine multiple PDFs into one file in the order you want</p>
+                    <div class="tool-arrow">→</div>
+                </a>
+
+                <!-- Split PDF -->
+                <a href="pages/split.html" class="tool-card" data-color="blue">
+                    <div class="tool-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5" />
+                        </svg>
+                    </div>
+                    <h3>Split PDF</h3>
+                    <p>Separate one page or extract pages from your PDF</p>
+                    <div class="tool-arrow">→</div>
+                </a>
+
+                <!-- Compress PDF -->
+                <a href="pages/compress.html" class="tool-card" data-color="green">
+                    <div class="tool-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M12 3v18M3 12h18M7 8l5-5 5 5M17 16l-5 5-5-5" />
+                        </svg>
+                    </div>
+                    <h3>Compress PDF</h3>
+                    <p>Reduce file size while keeping maximum quality</p>
+                    <div class="tool-arrow">→</div>
+                </a>
+
+                <!-- PDF to JPG -->
+                <a href="pages/pdf-to-jpg.html" class="tool-card" data-color="purple">
+                    <div class="tool-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                            <circle cx="8.5" cy="8.5" r="1.5" />
+                            <polyline points="21 15 16 10 5 21" />
+                        </svg>
+                    </div>
+                    <h3>PDF to JPG</h3>
+                    <p>Convert PDF pages to high-quality JPG images</p>
+                    <div class="tool-arrow">→</div>
+                </a>
+
+                <!-- JPG to PDF -->
+                <a href="pages/jpg-to-pdf.html" class="tool-card" data-color="orange">
+                    <div class="tool-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                            <line x1="12" y1="18" x2="12" y2="12" />
+                            <line x1="9" y1="15" x2="15" y2="15" />
+                        </svg>
+                    </div>
+                    <h3>JPG to PDF</h3>
+                    <p>Convert images to PDF and adjust orientation</p>
+                    <div class="tool-arrow">→</div>
+                </a>
+
+                <!-- Rotate PDF -->
+                <a href="pages/rotate.html" class="tool-card" data-color="cyan">
+                    <div class="tool-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="23 4 23 10 17 10" />
+                            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                        </svg>
+                    </div>
+                    <h3>Rotate PDF</h3>
+                    <p>Rotate PDF pages individually or all at once</p>
+                    <div class="tool-arrow">→</div>
+                </a>
+
+                <!-- Watermark -->
+                <a href="pages/watermark.html" class="tool-card" data-color="pink">
+                    <div class="tool-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                        </svg>
+                    </div>
+                    <h3>Watermark</h3>
+                    <p>Add text or image watermark to your PDF</p>
+                    <div class="tool-arrow">→</div>
+                </a>
+
+                <!-- Word to PDF -->
+                <a href="pages/word-to-pdf.html" class="tool-card" data-color="indigo">
+                    <div class="tool-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                            <line x1="16" y1="13" x2="8" y2="13" />
+                            <line x1="16" y1="17" x2="8" y2="17" />
+                            <polyline points="10 9 9 9 8 9" />
+                        </svg>
+                    </div>
+                    <h3>Word to PDF</h3>
+                    <p>Convert Word documents to PDF format</p>
+                    <div class="tool-arrow">→</div>
+                </a>
+
+                <!-- Protect PDF -->
+                <a href="pages/protect.html" class="tool-card" data-color="red">
+                    <div class="tool-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                        </svg>
+                    </div>
+                    <h3>Protect PDF</h3>
+                    <p>Encrypt and password-protect your PDF files</p>
+                    <div class="tool-arrow">→</div>
+                </a>
+
+                <!-- Unlock PDF -->
+                <a href="pages/unlock.html" class="tool-card" data-color="green">
+                    <div class="tool-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                            <path d="M7 11V7a5 5 0 0 1 9.9-1" />
+                        </svg>
+                    </div>
+                    <h3>Unlock PDF</h3>
+                    <p>Remove password protection from PDF files</p>
+                    <div class="tool-arrow">→</div>
+                </a>
+
+                <!-- PDF to Word -->
+                <a href="pages/pdf-to-word.html" class="tool-card" data-color="blue">
+                    <div class="tool-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                            <line x1="16" y1="13" x2="8" y2="13" />
+                            <line x1="16" y1="17" x2="8" y2="17" />
+                        </svg>
+                    </div>
+                    <h3>PDF to Word</h3>
+                    <p>Convert PDF to editable Word documents</p>
+                    <div class="tool-arrow">→</div>
+                </a>
+
+                <!-- PDF to Excel -->
+                <a href="pages/pdf-to-excel.html" class="tool-card" data-color="green">
+                    <div class="tool-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                            <line x1="3" y1="9" x2="21" y2="9" />
+                            <line x1="3" y1="15" x2="21" y2="15" />
+                            <line x1="9" y1="3" x2="9" y2="21" />
+                            <line x1="15" y1="3" x2="15" y2="21" />
+                        </svg>
+                    </div>
+                    <h3>PDF to Excel</h3>
+                    <p>Extract tables from PDF to Excel spreadsheets</p>
+                    <div class="tool-arrow">→</div>
+                </a>
+
+                <!-- PDF to PowerPoint -->
+                <a href="pages/pdf-to-powerpoint.html" class="tool-card" data-color="red">
+                    <div class="tool-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                            <line x1="8" y1="21" x2="16" y2="21" />
+                            <line x1="12" y1="17" x2="12" y2="21" />
+                        </svg>
+                    </div>
+                    <h3>PDF to PowerPoint</h3>
+                    <p>Convert PDF to editable presentations</p>
+                    <div class="tool-arrow">→</div>
+                </a>
+
+                <!-- PowerPoint to PDF -->
+                <a href="pages/powerpoint-to-pdf.html" class="tool-card" data-color="orange">
+                    <div class="tool-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                            <line x1="8" y1="21" x2="16" y2="21" />
+                            <line x1="12" y1="17" x2="12" y2="21" />
+                            <polyline points="7 10 12 7 17 10" />
+                        </svg>
+                    </div>
+                    <h3>PowerPoint to PDF</h3>
+                    <p>Convert PPT presentations to PDF format</p>
+                    <div class="tool-arrow">→</div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="tools-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Why Choose Us?</h2>
+                <p>Powerful features that make PDF editing a breeze</p>
+            </div>
+
+            <div class="tools-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+                <div class="tool-card" style="cursor: default;">
+                    <div class="tool-icon" style="background: linear-gradient(135deg, #10b981, #34d399);">
+                        ⚡
+                    </div>
+                    <h3>Lightning Fast</h3>
+                    <p>Process your PDFs in seconds with our optimized algorithms</p>
+                </div>
+
+                <div class="tool-card" style="cursor: default;">
+                    <div class="tool-icon" style="background: linear-gradient(135deg, #3b82f6, #60a5fa);">
+                        🔒
+                    </div>
+                    <h3>Secure & Private</h3>
+                    <p>Your files are automatically deleted after processing</p>
+                </div>
+
+                <div class="tool-card" style="cursor: default;">
+                    <div class="tool-icon" style="background: linear-gradient(135deg, #8b5cf6, #a78bfa);">
+                        💯
+                    </div>
+                    <h3>100% Free</h3>
+                    <p>All tools are completely free with no hidden costs</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="index.html" class="logo" style="margin-bottom: 1rem;">
+                        <span class="logo-icon">📄</span>
+                        <span>PDF Tools</span>
+                    </a>
+                    <p style="font-size: 0.875rem;">Free online PDF tools for everyone. No registration, no limits.</p>
+                </div>
+
+                <div class="footer-col">
+                    <h4>PDF Tools</h4>
+                    <ul class="footer-links">
+                        <li><a href="pages/merge.html">Merge PDF</a></li>
+                        <li><a href="pages/split.html">Split PDF</a></li>
+                        <li><a href="pages/compress.html">Compress PDF</a></li>
+                        <li><a href="pages/rotate.html">Rotate PDF</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Convert</h4>
+                    <ul class="footer-links">
+                        <li><a href="pages/pdf-to-jpg.html">PDF to JPG</a></li>
+                        <li><a href="pages/jpg-to-pdf.html">JPG to PDF</a></li>
+                        <li><a href="pages/word-to-pdf.html">Word to PDF</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Security</h4>
+                    <ul class="footer-links">
+                        <li><a href="pages/protect.html">Protect PDF</a></li>
+                        <li><a href="pages/unlock.html">Unlock PDF</a></li>
+                        <li><a href="pages/watermark.html">Watermark</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2024 PDF Tools. All rights reserved.</p>
+                <div class="footer-social">
+                    <a href="#" aria-label="Twitter">𝕏</a>
+                    <a href="#" aria-label="GitHub">⌨</a>
+                    <a href="#" aria-label="Email">✉</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="scripts/main.js"></script>
+</body>
+
+</html>

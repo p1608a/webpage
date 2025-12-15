@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Protect PDF files with password encryption. Free online PDF protection tool.">
+    <title>Protect PDF - Password Protect PDF Online Free</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23e5322d'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>🔒</text></svg>">
+
+    <style>
+        .tool-page {
+            padding-top: 120px;
+            min-height: 100vh;
+        }
+
+        .tool-header {
+            text-align: center;
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .tool-header h1 {
+            font-size: var(--font-size-4xl);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .tool-header p {
+            font-size: var(--font-size-lg);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .tool-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: center;
+            margin-top: var(--spacing-xl);
+            flex-wrap: wrap;
+        }
+
+        .options-panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin-top: var(--spacing-xl);
+        }
+
+        .options-panel h4 {
+            margin-bottom: var(--spacing-lg);
+            font-size: var(--font-size-lg);
+        }
+
+        .option-group {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .option-group label {
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .option-group input {
+            width: 100%;
+            padding: var(--spacing-md);
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            font-family: var(--font-family);
+        }
+
+        .option-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .password-strength {
+            margin-top: var(--spacing-sm);
+        }
+
+        .strength-bar {
+            height: 4px;
+            background: var(--glass-border);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .strength-fill {
+            height: 100%;
+            width: 0;
+            transition: all var(--transition-base);
+        }
+
+        .strength-text {
+            font-size: var(--font-size-sm);
+            margin-top: var(--spacing-xs);
+            color: var(--text-muted);
+        }
+
+        .security-note {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: var(--radius-md);
+            margin-top: var(--spacing-lg);
+        }
+
+        .security-note .icon {
+            font-size: 24px;
+        }
+
+        .security-note p {
+            font-size: var(--font-size-sm);
+            color: var(--text-secondary);
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+
+    <header class="header">
+        <div class="container">
+            <a href="../index.html" class="logo">
+                <span class="logo-icon">📄</span>
+                <span>PDF Tools</span>
+            </a>
+            <nav class="nav" id="mainNav">
+                <a href="../index.html" class="nav-link">← All Tools</a>
+                <a href="unlock.html" class="nav-link">Unlock PDF</a>
+            </nav>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+        </div>
+    </header>
+
+    <main class="tool-page">
+        <div class="container">
+            <div class="tool-header">
+                <h1>Protect PDF</h1>
+                <p>Add password protection to your PDF documents.</p>
+            </div>
+
+            <div class="tool-content">
+                <div class="upload-zone" id="uploadZone">
+                    <div class="upload-icon">🔒</div>
+                    <h3>Drop PDF file here</h3>
+                    <p>or click to browse</p>
+                    <input type="file" id="fileInput" accept=".pdf,application/pdf">
+                    <button class="btn btn-primary">Select PDF File</button>
+                </div>
+
+                <div class="file-list" id="fileList"></div>
+
+                <div class="options-panel hidden" id="optionsPanel">
+                    <h4>Set Password</h4>
+
+                    <div class="option-group">
+                        <label>Password</label>
+                        <input type="password" id="password" placeholder="Enter a strong password">
+                        <div class="password-strength">
+                            <div class="strength-bar">
+                                <div class="strength-fill" id="strengthFill"></div>
+                            </div>
+                            <div class="strength-text" id="strengthText">Enter a password</div>
+                        </div>
+                    </div>
+
+                    <div class="option-group">
+                        <label>Confirm Password</label>
+                        <input type="password" id="confirmPassword" placeholder="Confirm your password">
+                    </div>
+
+                    <div class="security-note">
+                        <span class="icon">🔐</span>
+                        <p>Your password is not stored anywhere. Make sure to remember it, as the PDF cannot be opened
+                            without it.</p>
+                    </div>
+                </div>
+
+                <div class="action-buttons hidden" id="actionButtons">
+                    <button class="btn btn-primary btn-lg" id="protectBtn">
+                        Protect PDF
+                    </button>
+                    <button class="btn btn-secondary" id="clearBtn">Clear</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 PDF Tools.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../scripts/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const optionsPanel = document.getElementById('optionsPanel');
+            const actionButtons = document.getElementById('actionButtons');
+            const passwordInput = document.getElementById('password');
+            const confirmInput = document.getElementById('confirmPassword');
+            const strengthFill = document.getElementById('strengthFill');
+            const strengthText = document.getElementById('strengthText');
+
+            currentUploader = new FileUploader('uploadZone', {
+                maxFiles: 1,
+                acceptedTypes: ['application/pdf'],
+                onFilesChange: (files) => {
+                    renderFileList(files, 'fileList', currentUploader);
+                    const show = files.length > 0;
+                    optionsPanel.classList.toggle('hidden', !show);
+                    actionButtons.classList.toggle('hidden', !show);
+                }
+            });
+
+            // Password strength checker
+            passwordInput.addEventListener('input', () => {
+                const password = passwordInput.value;
+                let strength = 0;
+                let text = '';
+                let color = '';
+
+                if (password.length >= 8) strength++;
+                if (password.length >= 12) strength++;
+                if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+                if (/[0-9]/.test(password)) strength++;
+                if (/[^a-zA-Z0-9]/.test(password)) strength++;
+
+                if (password.length === 0) {
+                    text = 'Enter a password';
+                    color = 'var(--glass-border)';
+                    strength = 0;
+                } else if (strength < 2) {
+                    text = 'Weak password';
+                    color = '#ef4444';
+                } else if (strength < 4) {
+                    text = 'Medium password';
+                    color = '#f59e0b';
+                } else {
+                    text = 'Strong password';
+                    color = '#10b981';
+                }
+
+                strengthFill.style.width = `${(strength / 5) * 100}%`;
+                strengthFill.style.background = color;
+                strengthText.textContent = text;
+                strengthText.style.color = color;
+            });
+
+            document.getElementById('protectBtn').addEventListener('click', async () => {
+                const files = currentUploader.getFiles();
+                if (files.length === 0) return;
+
+                const password = passwordInput.value;
+                const confirm = confirmInput.value;
+
+                if (!password) {
+                    alert('Please enter a password');
+                    return;
+                }
+
+                if (password !== confirm) {
+                    alert('Passwords do not match');
+                    return;
+                }
+
+                showProcessing('Protecting your PDF...');
+
+                try {
+                    const result = await processFiles('/protect', files, { password });
+                    showSuccess('PDF protected successfully!', result.fileId, result.filename);
+                } catch (error) {
+                    showError(error.message || 'Failed to protect PDF');
+                }
+            });
+
+            document.getElementById('clearBtn').addEventListener('click', () => currentUploader.clearFiles());
+        });
+    </script>
+</body>
+
+</html>

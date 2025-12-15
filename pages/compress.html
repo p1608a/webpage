@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Compress PDF files to reduce file size while maintaining quality. Free online PDF compressor.">
+    <title>Compress PDF - Reduce PDF File Size Online Free</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2310b981'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>P</text></svg>">
+
+    <style>
+        .tool-page {
+            padding-top: 120px;
+            min-height: 100vh;
+        }
+
+        .tool-header {
+            text-align: center;
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .tool-header h1 {
+            font-size: var(--font-size-4xl);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .tool-header p {
+            font-size: var(--font-size-lg);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .tool-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: center;
+            margin-top: var(--spacing-xl);
+            flex-wrap: wrap;
+        }
+
+        .options-panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin-top: var(--spacing-xl);
+        }
+
+        .options-panel h4 {
+            margin-bottom: var(--spacing-lg);
+            font-size: var(--font-size-lg);
+        }
+
+        .quality-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-md);
+        }
+
+        .quality-option {
+            padding: var(--spacing-lg);
+            background: var(--bg-secondary);
+            border: 2px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+
+        .quality-option:hover {
+            border-color: rgba(16, 185, 129, 0.5);
+        }
+
+        .quality-option.selected {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .quality-option h5 {
+            margin-bottom: var(--spacing-sm);
+            color: var(--text-primary);
+        }
+
+        .quality-option p {
+            font-size: var(--font-size-sm);
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .quality-option input {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+
+    <header class="header">
+        <div class="container">
+            <a href="../index.html" class="logo">
+                <span class="logo-icon">📄</span>
+                <span>PDF Tools</span>
+            </a>
+            <nav class="nav" id="mainNav">
+                <a href="../index.html" class="nav-link">← All Tools</a>
+                <a href="merge.html" class="nav-link">Merge PDF</a>
+                <a href="split.html" class="nav-link">Split PDF</a>
+            </nav>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+        </div>
+    </header>
+
+    <main class="tool-page">
+        <div class="container">
+            <div class="tool-header">
+                <h1>Compress PDF</h1>
+                <p>Reduce the file size of your PDF while maintaining quality.</p>
+            </div>
+
+            <div class="tool-content">
+                <div class="upload-zone" id="uploadZone">
+                    <div class="upload-icon" style="background: linear-gradient(135deg, #10b981, #34d399);">📦</div>
+                    <h3>Drop PDF file here</h3>
+                    <p>or click to browse</p>
+                    <input type="file" id="fileInput" accept=".pdf,application/pdf">
+                    <button class="btn btn-primary"
+                        style="background: linear-gradient(135deg, #10b981, #34d399);">Select PDF File</button>
+                </div>
+
+                <div class="file-list" id="fileList"></div>
+
+                <div class="options-panel hidden" id="optionsPanel">
+                    <h4>Compression Level</h4>
+                    <div class="quality-options">
+                        <label class="quality-option" data-quality="low">
+                            <input type="radio" name="quality" value="low">
+                            <h5>🏋️ Extreme</h5>
+                            <p>Smallest size, lower quality</p>
+                        </label>
+                        <label class="quality-option selected" data-quality="medium">
+                            <input type="radio" name="quality" value="medium" checked>
+                            <h5>⚖️ Balanced</h5>
+                            <p>Good compression, good quality</p>
+                        </label>
+                        <label class="quality-option" data-quality="high">
+                            <input type="radio" name="quality" value="high">
+                            <h5>💎 High Quality</h5>
+                            <p>Less compression, best quality</p>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="action-buttons hidden" id="actionButtons">
+                    <button class="btn btn-primary btn-lg" id="compressBtn"
+                        style="background: linear-gradient(135deg, #10b981, #34d399);">
+                        Compress PDF
+                    </button>
+                    <button class="btn btn-secondary" id="clearBtn">Clear</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 PDF Tools. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../scripts/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const optionsPanel = document.getElementById('optionsPanel');
+            const actionButtons = document.getElementById('actionButtons');
+            const compressBtn = document.getElementById('compressBtn');
+            const clearBtn = document.getElementById('clearBtn');
+
+            let quality = 'medium';
+
+            currentUploader = new FileUploader('uploadZone', {
+                maxFiles: 1,
+                acceptedTypes: ['application/pdf'],
+                onFilesChange: (files) => {
+                    renderFileList(files, 'fileList', currentUploader);
+                    if (files.length > 0) {
+                        optionsPanel.classList.remove('hidden');
+                        actionButtons.classList.remove('hidden');
+                    } else {
+                        optionsPanel.classList.add('hidden');
+                        actionButtons.classList.add('hidden');
+                    }
+                }
+            });
+
+            document.querySelectorAll('.quality-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    document.querySelectorAll('.quality-option').forEach(o => o.classList.remove('selected'));
+                    option.classList.add('selected');
+                    option.querySelector('input').checked = true;
+                    quality = option.dataset.quality;
+                });
+            });
+
+            compressBtn.addEventListener('click', async () => {
+                const files = currentUploader.getFiles();
+                if (files.length === 0) return;
+
+                showProcessing('Compressing your PDF...');
+
+                try {
+                    const result = await processFiles('/compress', files, { quality });
+                    const overlay = document.getElementById('processingOverlay');
+                    if (overlay) {
+                        overlay.innerHTML = `
+              <div class="processing-content">
+                <div class="success-icon" style="background: linear-gradient(135deg, #10b981, #34d399);">✓</div>
+                <h3>PDF compressed successfully!</h3>
+                <p class="text-secondary mb-lg">Reduced by ${result.reduction}</p>
+                <div style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 1.5rem;">
+                  <div style="text-align: center;">
+                    <p style="font-size: 0.875rem; color: var(--text-muted);">Original</p>
+                    <p style="font-size: 1.25rem; font-weight: 600;">${formatFileSize(result.originalSize)}</p>
+                  </div>
+                  <div style="font-size: 2rem; color: var(--text-muted);">→</div>
+                  <div style="text-align: center;">
+                    <p style="font-size: 0.875rem; color: var(--text-muted);">Compressed</p>
+                    <p style="font-size: 1.25rem; font-weight: 600; color: #10b981;">${formatFileSize(result.compressedSize)}</p>
+                  </div>
+                </div>
+                <button class="btn btn-primary btn-lg" style="background: linear-gradient(135deg, #10b981, #34d399);" onclick="downloadFile('${result.fileId}', '${result.filename}'); hideProcessing();">
+                  Download Compressed PDF
+                </button>
+                <button class="btn btn-secondary" style="margin-left: 1rem;" onclick="hideProcessing(); location.reload();">
+                  Compress Another
+                </button>
+              </div>
+            `;
+                    }
+                } catch (error) {
+                    showError(error.message || 'Failed to compress PDF');
+                }
+            });
+
+            clearBtn.addEventListener('click', () => currentUploader.clearFiles());
+        });
+    </script>
+</body>
+
+</html>

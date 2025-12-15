@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Split PDF files into separate pages or extract specific pages. Free online PDF splitter.">
+    <title>Split PDF - Extract Pages from PDF Online Free</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%233b82f6'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>P</text></svg>">
+
+    <style>
+        .tool-page {
+            padding-top: 120px;
+            min-height: 100vh;
+        }
+
+        .tool-header {
+            text-align: center;
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .tool-header h1 {
+            font-size: var(--font-size-4xl);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .tool-header p {
+            font-size: var(--font-size-lg);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .tool-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: center;
+            margin-top: var(--spacing-xl);
+            flex-wrap: wrap;
+        }
+
+        .options-panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin-top: var(--spacing-xl);
+        }
+
+        .options-panel h4 {
+            margin-bottom: var(--spacing-lg);
+            font-size: var(--font-size-lg);
+        }
+
+        .option-group {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .option-group label {
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .option-group input,
+        .option-group select {
+            width: 100%;
+            padding: var(--spacing-md);
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            font-family: var(--font-family);
+        }
+
+        .option-group input:focus,
+        .option-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .radio-group {
+            display: flex;
+            gap: var(--spacing-lg);
+            flex-wrap: wrap;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            cursor: pointer;
+            padding: var(--spacing-md);
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            transition: all var(--transition-base);
+        }
+
+        .radio-option:hover {
+            border-color: var(--primary);
+        }
+
+        .radio-option.selected {
+            border-color: var(--primary);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .radio-option input {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+
+    <header class="header">
+        <div class="container">
+            <a href="../index.html" class="logo">
+                <span class="logo-icon">📄</span>
+                <span>PDF Tools</span>
+            </a>
+            <nav class="nav" id="mainNav">
+                <a href="../index.html" class="nav-link">← All Tools</a>
+                <a href="merge.html" class="nav-link">Merge PDF</a>
+                <a href="compress.html" class="nav-link">Compress PDF</a>
+            </nav>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+        </div>
+    </header>
+
+    <main class="tool-page">
+        <div class="container">
+            <div class="tool-header">
+                <h1>Split PDF</h1>
+                <p>Extract pages from your PDF or split it into multiple files.</p>
+            </div>
+
+            <div class="tool-content">
+                <div class="upload-zone" id="uploadZone">
+                    <div class="upload-icon" style="background: linear-gradient(135deg, #3b82f6, #60a5fa);">✂</div>
+                    <h3>Drop PDF file here</h3>
+                    <p>or click to browse</p>
+                    <input type="file" id="fileInput" accept=".pdf,application/pdf">
+                    <button class="btn btn-primary"
+                        style="background: linear-gradient(135deg, #3b82f6, #60a5fa);">Select PDF File</button>
+                </div>
+
+                <div class="file-list" id="fileList"></div>
+
+                <div class="options-panel hidden" id="optionsPanel">
+                    <h4>Split Options</h4>
+
+                    <div class="option-group">
+                        <label>Split Mode</label>
+                        <div class="radio-group">
+                            <label class="radio-option selected" data-mode="all">
+                                <input type="radio" name="mode" value="all" checked>
+                                <span>📑 Extract all pages</span>
+                            </label>
+                            <label class="radio-option" data-mode="range">
+                                <input type="radio" name="mode" value="range">
+                                <span>📄 Select specific pages</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="option-group hidden" id="pagesInput">
+                        <label>Pages to extract (e.g., 1,3,5-7)</label>
+                        <input type="text" id="pages" placeholder="1,3,5-7">
+                    </div>
+                </div>
+
+                <div class="action-buttons hidden" id="actionButtons">
+                    <button class="btn btn-primary btn-lg" id="splitBtn"
+                        style="background: linear-gradient(135deg, #3b82f6, #60a5fa);">
+                        Split PDF
+                    </button>
+                    <button class="btn btn-secondary" id="clearBtn">Clear</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 PDF Tools. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../scripts/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const optionsPanel = document.getElementById('optionsPanel');
+            const actionButtons = document.getElementById('actionButtons');
+            const pagesInput = document.getElementById('pagesInput');
+            const splitBtn = document.getElementById('splitBtn');
+            const clearBtn = document.getElementById('clearBtn');
+
+            let splitMode = 'all';
+
+            currentUploader = new FileUploader('uploadZone', {
+                maxFiles: 1,
+                acceptedTypes: ['application/pdf'],
+                onFilesChange: (files) => {
+                    renderFileList(files, 'fileList', currentUploader);
+                    if (files.length > 0) {
+                        optionsPanel.classList.remove('hidden');
+                        actionButtons.classList.remove('hidden');
+                    } else {
+                        optionsPanel.classList.add('hidden');
+                        actionButtons.classList.add('hidden');
+                    }
+                }
+            });
+
+            // Mode selection
+            document.querySelectorAll('.radio-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    document.querySelectorAll('.radio-option').forEach(o => o.classList.remove('selected'));
+                    option.classList.add('selected');
+                    option.querySelector('input').checked = true;
+                    splitMode = option.dataset.mode;
+
+                    if (splitMode === 'range') {
+                        pagesInput.classList.remove('hidden');
+                    } else {
+                        pagesInput.classList.add('hidden');
+                    }
+                });
+            });
+
+            splitBtn.addEventListener('click', async () => {
+                const files = currentUploader.getFiles();
+                if (files.length === 0) return;
+
+                showProcessing('Splitting your PDF...');
+
+                try {
+                    const options = { mode: splitMode };
+                    if (splitMode === 'range') {
+                        options.pages = document.getElementById('pages').value;
+                    }
+
+                    const result = await processFiles('/split', files, options);
+                    showSuccess('PDF split successfully!', result.fileId, result.filename);
+                } catch (error) {
+                    showError(error.message || 'Failed to split PDF');
+                }
+            });
+
+            clearBtn.addEventListener('click', () => currentUploader.clearFiles());
+        });
+    </script>
+</body>
+
+</html>

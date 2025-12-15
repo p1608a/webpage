@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Convert PDF files to editable Word documents. Free online PDF to Word converter.">
+    <title>PDF to Word - Convert PDF to DOCX Online Free</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%232563eb'/><text x='50' y='65' font-size='40' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>W</text></svg>">
+
+    <style>
+        .tool-page {
+            padding-top: 120px;
+            min-height: 100vh;
+        }
+
+        .tool-header {
+            text-align: center;
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .tool-header h1 {
+            font-size: var(--font-size-4xl);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .tool-header p {
+            font-size: var(--font-size-lg);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .tool-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: center;
+            margin-top: var(--spacing-xl);
+            flex-wrap: wrap;
+        }
+
+        .format-info {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: center;
+            margin-top: var(--spacing-xl);
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .format-badge {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-sm);
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+
+    <header class="header">
+        <div class="container">
+            <a href="../index.html" class="logo">
+                <span class="logo-icon">📄</span>
+                <span>PDF Tools</span>
+            </a>
+            <nav class="nav" id="mainNav">
+                <a href="../index.html" class="nav-link">← All Tools</a>
+                <a href="word-to-pdf.html" class="nav-link">Word to PDF</a>
+            </nav>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+        </div>
+    </header>
+
+    <main class="tool-page">
+        <div class="container">
+            <div class="tool-header">
+                <h1>PDF to Word</h1>
+                <p>Convert PDF documents to editable Word format with high accuracy.</p>
+            </div>
+
+            <div class="tool-content">
+                <div class="upload-zone" id="uploadZone">
+                    <div class="upload-icon" style="background: linear-gradient(135deg, #2563eb, #3b82f6);">📝</div>
+                    <h3>Drop PDF file here</h3>
+                    <p>or click to browse</p>
+                    <input type="file" id="fileInput" accept=".pdf,application/pdf">
+                    <button class="btn btn-primary"
+                        style="background: linear-gradient(135deg, #2563eb, #3b82f6);">Select PDF File</button>
+                </div>
+
+                <div class="format-info">
+                    <div class="format-badge">
+                        <span>📕</span>
+                        <span>.PDF</span>
+                    </div>
+                    <span style="color: var(--text-muted); font-size: 1.5rem;">→</span>
+                    <div class="format-badge" style="border-color: #2563eb; background: rgba(37, 99, 235, 0.1);">
+                        <span>📄</span>
+                        <span>.DOCX</span>
+                    </div>
+                </div>
+
+                <div class="file-list" id="fileList"></div>
+
+                <div class="action-buttons hidden" id="actionButtons">
+                    <button class="btn btn-primary btn-lg" id="convertBtn"
+                        style="background: linear-gradient(135deg, #2563eb, #3b82f6);">
+                        Convert to Word
+                    </button>
+                    <button class="btn btn-secondary" id="clearBtn">Clear</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 PDF Tools.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../scripts/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const actionButtons = document.getElementById('actionButtons');
+
+            currentUploader = new FileUploader('uploadZone', {
+                maxFiles: 1,
+                acceptedTypes: ['application/pdf'],
+                onFilesChange: (files) => {
+                    renderFileList(files, 'fileList', currentUploader);
+                    actionButtons.classList.toggle('hidden', files.length === 0);
+                }
+            });
+
+            document.getElementById('convertBtn').addEventListener('click', async () => {
+                const files = currentUploader.getFiles();
+                if (files.length === 0) return;
+
+                showProcessing('Converting PDF to Word...');
+
+                try {
+                    const result = await processFiles('/pdf-to-word', files);
+                    showSuccess('PDF converted to Word!', result.fileId, result.filename);
+                } catch (error) {
+                    showError(error.message || 'Failed to convert PDF');
+                }
+            });
+
+            document.getElementById('clearBtn').addEventListener('click', () => currentUploader.clearFiles());
+        });
+    </script>
+</body>
+
+</html>

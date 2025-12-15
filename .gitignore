@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+server/node_modules/
+
+# Environment variables
+.env
+
+# Temporary files
+server/uploads/
+server/output/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/

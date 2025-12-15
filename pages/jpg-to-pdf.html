@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Convert JPG, PNG and other images to PDF. Free online image to PDF converter.">
+    <title>JPG to PDF - Convert Images to PDF Online Free</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23f59e0b'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>P</text></svg>">
+
+    <style>
+        .tool-page {
+            padding-top: 120px;
+            min-height: 100vh;
+        }
+
+        .tool-header {
+            text-align: center;
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .tool-header h1 {
+            font-size: var(--font-size-4xl);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .tool-header p {
+            font-size: var(--font-size-lg);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .tool-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: center;
+            margin-top: var(--spacing-xl);
+            flex-wrap: wrap;
+        }
+
+        .options-panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin-top: var(--spacing-xl);
+        }
+
+        .options-panel h4 {
+            margin-bottom: var(--spacing-lg);
+            font-size: var(--font-size-lg);
+        }
+
+        .option-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-lg);
+        }
+
+        .option-group {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .option-group label {
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .option-group select {
+            width: 100%;
+            padding: var(--spacing-md);
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+
+    <header class="header">
+        <div class="container">
+            <a href="../index.html" class="logo">
+                <span class="logo-icon">📄</span>
+                <span>PDF Tools</span>
+            </a>
+            <nav class="nav" id="mainNav">
+                <a href="../index.html" class="nav-link">← All Tools</a>
+                <a href="pdf-to-jpg.html" class="nav-link">PDF to JPG</a>
+            </nav>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+        </div>
+    </header>
+
+    <main class="tool-page">
+        <div class="container">
+            <div class="tool-header">
+                <h1>JPG to PDF</h1>
+                <p>Convert images to PDF. Arrange images and create a PDF document.</p>
+            </div>
+
+            <div class="tool-content">
+                <div class="upload-zone" id="uploadZone">
+                    <div class="upload-icon" style="background: linear-gradient(135deg, #f59e0b, #fbbf24);">📷</div>
+                    <h3>Drop images here</h3>
+                    <p>JPG, PNG, GIF, WebP accepted</p>
+                    <input type="file" id="fileInput" accept="image/jpeg,image/png,image/gif,image/webp" multiple>
+                    <button class="btn btn-primary"
+                        style="background: linear-gradient(135deg, #f59e0b, #fbbf24);">Select Images</button>
+                </div>
+
+                <div class="file-list" id="fileList"></div>
+
+                <div class="options-panel hidden" id="optionsPanel">
+                    <h4>PDF Options</h4>
+                    <div class="option-row">
+                        <div class="option-group">
+                            <label>Page Orientation</label>
+                            <select id="orientation">
+                                <option value="portrait">Portrait</option>
+                                <option value="landscape">Landscape</option>
+                                <option value="auto">Auto (match image)</option>
+                            </select>
+                        </div>
+                        <div class="option-group">
+                            <label>Page Margin</label>
+                            <select id="margin">
+                                <option value="0">No margin</option>
+                                <option value="20" selected>Small</option>
+                                <option value="40">Medium</option>
+                                <option value="60">Large</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons hidden" id="actionButtons">
+                    <button class="btn btn-primary btn-lg" id="convertBtn"
+                        style="background: linear-gradient(135deg, #f59e0b, #fbbf24);">
+                        Create PDF
+                    </button>
+                    <button class="btn btn-secondary" id="clearBtn">Clear All</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 PDF Tools.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../scripts/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const optionsPanel = document.getElementById('optionsPanel');
+            const actionButtons = document.getElementById('actionButtons');
+
+            currentUploader = new FileUploader('uploadZone', {
+                maxFiles: 20,
+                acceptedTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
+                onFilesChange: (files) => {
+                    renderFileList(files, 'fileList', currentUploader);
+                    const show = files.length > 0;
+                    optionsPanel.classList.toggle('hidden', !show);
+                    actionButtons.classList.toggle('hidden', !show);
+                }
+            });
+
+            document.getElementById('convertBtn').addEventListener('click', async () => {
+                const files = currentUploader.getFiles();
+                if (files.length === 0) return;
+
+                showProcessing('Creating PDF from images...');
+
+                try {
+                    const result = await processFiles('/jpg-to-pdf', files, {
+                        orientation: document.getElementById('orientation').value,
+                        margin: document.getElementById('margin').value
+                    });
+                    showSuccess('PDF created successfully!', result.fileId, result.filename);
+                } catch (error) {
+                    showError(error.message || 'Failed to create PDF');
+                }
+            });
+
+            document.getElementById('clearBtn').addEventListener('click', () => currentUploader.clearFiles());
+        });
+    </script>
+</body>
+
+</html>

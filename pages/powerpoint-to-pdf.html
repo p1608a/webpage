@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Convert PowerPoint presentations to PDF format. Free online PPT to PDF converter.">
+    <title>PowerPoint to PDF - Convert PPTX to PDF Online Free</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23ea580c'/><text x='50' y='65' font-size='40' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>P</text></svg>">
+
+    <style>
+        .tool-page {
+            padding-top: 120px;
+            min-height: 100vh;
+        }
+
+        .tool-header {
+            text-align: center;
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .tool-header h1 {
+            font-size: var(--font-size-4xl);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .tool-header p {
+            font-size: var(--font-size-lg);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .tool-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: center;
+            margin-top: var(--spacing-xl);
+            flex-wrap: wrap;
+        }
+
+        .format-info {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: center;
+            margin-top: var(--spacing-xl);
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .format-badge {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-sm);
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+
+    <header class="header">
+        <div class="container">
+            <a href="../index.html" class="logo">
+                <span class="logo-icon">📄</span>
+                <span>PDF Tools</span>
+            </a>
+            <nav class="nav" id="mainNav">
+                <a href="../index.html" class="nav-link">← All Tools</a>
+                <a href="pdf-to-powerpoint.html" class="nav-link">PDF to PPT</a>
+            </nav>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+        </div>
+    </header>
+
+    <main class="tool-page">
+        <div class="container">
+            <div class="tool-header">
+                <h1>PowerPoint to PDF</h1>
+                <p>Convert PPT and PPTX presentations to PDF format.</p>
+            </div>
+
+            <div class="tool-content">
+                <div class="upload-zone" id="uploadZone">
+                    <div class="upload-icon" style="background: linear-gradient(135deg, #ea580c, #f97316);">📽</div>
+                    <h3>Drop PowerPoint file here</h3>
+                    <p>PPT, PPTX files accepted</p>
+                    <input type="file" id="fileInput"
+                        accept=".ppt,.pptx,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation">
+                    <button class="btn btn-primary"
+                        style="background: linear-gradient(135deg, #ea580c, #f97316);">Select PowerPoint File</button>
+                </div>
+
+                <div class="format-info">
+                    <div class="format-badge">
+                        <span>📽</span>
+                        <span>.PPTX</span>
+                    </div>
+                    <span style="color: var(--text-muted); font-size: 1.5rem;">→</span>
+                    <div class="format-badge" style="border-color: #ea580c; background: rgba(234, 88, 12, 0.1);">
+                        <span>📕</span>
+                        <span>.PDF</span>
+                    </div>
+                </div>
+
+                <div class="file-list" id="fileList"></div>
+
+                <div class="action-buttons hidden" id="actionButtons">
+                    <button class="btn btn-primary btn-lg" id="convertBtn"
+                        style="background: linear-gradient(135deg, #ea580c, #f97316);">
+                        Convert to PDF
+                    </button>
+                    <button class="btn btn-secondary" id="clearBtn">Clear</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 PDF Tools.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../scripts/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const actionButtons = document.getElementById('actionButtons');
+
+            currentUploader = new FileUploader('uploadZone', {
+                maxFiles: 1,
+                acceptedTypes: [
+                    'application/vnd.ms-powerpoint',
+                    'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+                ],
+                onFilesChange: (files) => {
+                    renderFileList(files, 'fileList', currentUploader);
+                    actionButtons.classList.toggle('hidden', files.length === 0);
+                }
+            });
+
+            document.getElementById('convertBtn').addEventListener('click', async () => {
+                const files = currentUploader.getFiles();
+                if (files.length === 0) return;
+
+                showProcessing('Converting PowerPoint to PDF...');
+
+                try {
+                    const result = await processFiles('/powerpoint-to-pdf', files);
+                    showSuccess('PowerPoint converted to PDF!', result.fileId, result.filename);
+                } catch (error) {
+                    showError(error.message || 'Failed to convert PowerPoint');
+                }
+            });
+
+            document.getElementById('clearBtn').addEventListener('click', () => currentUploader.clearFiles());
+        });
+    </script>
+</body>
+
+</html>

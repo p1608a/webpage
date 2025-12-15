@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Remove password protection from PDF files. Free online PDF unlock tool.">
+    <title>Unlock PDF - Remove PDF Password Online Free</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2310b981'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>🔓</text></svg>">
+
+    <style>
+        .tool-page {
+            padding-top: 120px;
+            min-height: 100vh;
+        }
+
+        .tool-header {
+            text-align: center;
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .tool-header h1 {
+            font-size: var(--font-size-4xl);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .tool-header p {
+            font-size: var(--font-size-lg);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .tool-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: center;
+            margin-top: var(--spacing-xl);
+            flex-wrap: wrap;
+        }
+
+        .options-panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin-top: var(--spacing-xl);
+        }
+
+        .options-panel h4 {
+            margin-bottom: var(--spacing-lg);
+            font-size: var(--font-size-lg);
+        }
+
+        .option-group {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .option-group label {
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .option-group input {
+            width: 100%;
+            padding: var(--spacing-md);
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            font-family: var(--font-family);
+        }
+
+        .option-group input:focus {
+            outline: none;
+            border-color: #10b981;
+        }
+
+        .info-note {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: var(--radius-md);
+            margin-top: var(--spacing-lg);
+        }
+
+        .info-note .icon {
+            font-size: 24px;
+        }
+
+        .info-note p {
+            font-size: var(--font-size-sm);
+            color: var(--text-secondary);
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+
+    <header class="header">
+        <div class="container">
+            <a href="../index.html" class="logo">
+                <span class="logo-icon">📄</span>
+                <span>PDF Tools</span>
+            </a>
+            <nav class="nav" id="mainNav">
+                <a href="../index.html" class="nav-link">← All Tools</a>
+                <a href="protect.html" class="nav-link">Protect PDF</a>
+            </nav>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+        </div>
+    </header>
+
+    <main class="tool-page">
+        <div class="container">
+            <div class="tool-header">
+                <h1>Unlock PDF</h1>
+                <p>Remove password protection from your PDF documents.</p>
+            </div>
+
+            <div class="tool-content">
+                <div class="upload-zone" id="uploadZone">
+                    <div class="upload-icon" style="background: linear-gradient(135deg, #10b981, #34d399);">🔓</div>
+                    <h3>Drop protected PDF here</h3>
+                    <p>or click to browse</p>
+                    <input type="file" id="fileInput" accept=".pdf,application/pdf">
+                    <button class="btn btn-primary"
+                        style="background: linear-gradient(135deg, #10b981, #34d399);">Select PDF File</button>
+                </div>
+
+                <div class="file-list" id="fileList"></div>
+
+                <div class="options-panel hidden" id="optionsPanel">
+                    <h4>Enter Password</h4>
+
+                    <div class="option-group">
+                        <label>PDF Password (if required)</label>
+                        <input type="password" id="password" placeholder="Enter the PDF password">
+                    </div>
+
+                    <div class="info-note">
+                        <span class="icon">ℹ️</span>
+                        <p>Enter the password that was used to protect this PDF. Without the correct password, we cannot
+                            unlock the file.</p>
+                    </div>
+                </div>
+
+                <div class="action-buttons hidden" id="actionButtons">
+                    <button class="btn btn-primary btn-lg" id="unlockBtn"
+                        style="background: linear-gradient(135deg, #10b981, #34d399);">
+                        Unlock PDF
+                    </button>
+                    <button class="btn btn-secondary" id="clearBtn">Clear</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 PDF Tools.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../scripts/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const optionsPanel = document.getElementById('optionsPanel');
+            const actionButtons = document.getElementById('actionButtons');
+
+            currentUploader = new FileUploader('uploadZone', {
+                maxFiles: 1,
+                acceptedTypes: ['application/pdf'],
+                onFilesChange: (files) => {
+                    renderFileList(files, 'fileList', currentUploader);
+                    const show = files.length > 0;
+                    optionsPanel.classList.toggle('hidden', !show);
+                    actionButtons.classList.toggle('hidden', !show);
+                }
+            });
+
+            document.getElementById('unlockBtn').addEventListener('click', async () => {
+                const files = currentUploader.getFiles();
+                if (files.length === 0) return;
+
+                showProcessing('Unlocking your PDF...');
+
+                try {
+                    const result = await processFiles('/unlock', files, {
+                        password: document.getElementById('password').value
+                    });
+                    showSuccess('PDF unlocked successfully!', result.fileId, result.filename);
+                } catch (error) {
+                    showError(error.message || 'Failed to unlock PDF. Check your password.');
+                }
+            });
+
+            document.getElementById('clearBtn').addEventListener('click', () => currentUploader.clearFiles());
+        });
+    </script>
+</body>
+
+</html>

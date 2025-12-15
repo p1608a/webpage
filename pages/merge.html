@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Merge multiple PDF files into one document. Free online PDF merger - no registration required.">
+    <title>Merge PDF - Combine PDF Files Online Free</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23e5322d'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>P</text></svg>">
+
+    <style>
+        .tool-page {
+            padding-top: 120px;
+            min-height: 100vh;
+        }
+
+        .tool-header {
+            text-align: center;
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .tool-header h1 {
+            font-size: var(--font-size-4xl);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .tool-header p {
+            font-size: var(--font-size-lg);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .tool-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: center;
+            margin-top: var(--spacing-xl);
+            flex-wrap: wrap;
+        }
+
+        .options-panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin-top: var(--spacing-xl);
+        }
+
+        .options-panel h4 {
+            margin-bottom: var(--spacing-lg);
+            font-size: var(--font-size-lg);
+        }
+
+        .option-group {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .option-group label {
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .option-group input,
+        .option-group select {
+            width: 100%;
+            padding: var(--spacing-md);
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            font-family: var(--font-family);
+        }
+
+        .option-group input:focus,
+        .option-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .sortable-list {
+            min-height: 100px;
+        }
+
+        .sortable-list .file-item {
+            cursor: grab;
+            user-select: none;
+        }
+
+        .sortable-list .file-item:active {
+            cursor: grabbing;
+        }
+
+        .sortable-list .file-item.dragging {
+            opacity: 0.5;
+        }
+
+        .reorder-hint {
+            text-align: center;
+            padding: var(--spacing-md);
+            color: var(--text-muted);
+            font-size: var(--font-size-sm);
+            border: 1px dashed var(--glass-border);
+            border-radius: var(--radius-md);
+            margin-top: var(--spacing-md);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <a href="../index.html" class="logo">
+                <span class="logo-icon">📄</span>
+                <span>PDF Tools</span>
+            </a>
+
+            <nav class="nav" id="mainNav">
+                <a href="../index.html" class="nav-link">← All Tools</a>
+                <a href="split.html" class="nav-link">Split PDF</a>
+                <a href="compress.html" class="nav-link">Compress PDF</a>
+            </nav>
+
+            <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="tool-page">
+        <div class="container">
+            <div class="tool-header">
+                <h1>Merge PDF Files</h1>
+                <p>Combine multiple PDF files into a single document. Drag to reorder pages.</p>
+            </div>
+
+            <div class="tool-content">
+                <!-- Upload Zone -->
+                <div class="upload-zone" id="uploadZone">
+                    <div class="upload-icon">📎</div>
+                    <h3>Drop PDF files here</h3>
+                    <p>or click to browse</p>
+                    <input type="file" id="fileInput" accept=".pdf,application/pdf" multiple>
+                    <button class="btn btn-primary">Select PDF Files</button>
+                </div>
+
+                <!-- File List -->
+                <div class="file-list sortable-list" id="fileList"></div>
+                <div class="reorder-hint hidden" id="reorderHint">
+                    ↕ Drag files to reorder them
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons hidden" id="actionButtons">
+                    <button class="btn btn-primary btn-lg" id="mergeBtn">
+                        Merge PDFs
+                    </button>
+                    <button class="btn btn-secondary" id="clearBtn">
+                        Clear All
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 PDF Tools. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../scripts/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const fileList = document.getElementById('fileList');
+            const actionButtons = document.getElementById('actionButtons');
+            const reorderHint = document.getElementById('reorderHint');
+            const mergeBtn = document.getElementById('mergeBtn');
+            const clearBtn = document.getElementById('clearBtn');
+
+            // Initialize file uploader
+            currentUploader = new FileUploader('uploadZone', {
+                maxFiles: 20,
+                acceptedTypes: ['application/pdf'],
+                onFilesChange: (files) => {
+                    renderFileList(files, 'fileList', currentUploader);
+
+                    if (files.length >= 2) {
+                        actionButtons.classList.remove('hidden');
+                        reorderHint.classList.remove('hidden');
+                    } else {
+                        actionButtons.classList.add('hidden');
+                        reorderHint.classList.add('hidden');
+                    }
+
+                    // Add drag-and-drop sorting
+                    initSortable();
+                }
+            });
+
+            // Sortable functionality
+            function initSortable() {
+                const items = fileList.querySelectorAll('.file-item');
+
+                items.forEach((item, index) => {
+                    item.draggable = true;
+                    item.dataset.index = index;
+
+                    item.addEventListener('dragstart', (e) => {
+                        item.classList.add('dragging');
+                        e.dataTransfer.setData('text/plain', index);
+                    });
+
+                    item.addEventListener('dragend', () => {
+                        item.classList.remove('dragging');
+                    });
+
+                    item.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                    });
+
+                    item.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
+                        const toIndex = parseInt(item.dataset.index);
+
+                        if (fromIndex !== toIndex) {
+                            const files = currentUploader.getFiles();
+                            const [movedFile] = files.splice(fromIndex, 1);
+                            files.splice(toIndex, 0, movedFile);
+                            currentUploader.files = files;
+                            renderFileList(files, 'fileList', currentUploader);
+                            initSortable();
+                        }
+                    });
+                });
+            }
+
+            // Merge button
+            mergeBtn.addEventListener('click', async () => {
+                const files = currentUploader.getFiles();
+                if (files.length < 2) {
+                    alert('Please add at least 2 PDF files to merge');
+                    return;
+                }
+
+                showProcessing('Merging your PDF files...');
+
+                try {
+                    const result = await processFiles('/merge', files);
+                    showSuccess('PDFs merged successfully!', result.fileId, result.filename);
+                } catch (error) {
+                    showError(error.message || 'Failed to merge PDFs');
+                }
+            });
+
+            // Clear button
+            clearBtn.addEventListener('click', () => {
+                currentUploader.clearFiles();
+            });
+        });
+    </script>
+</body>
+
+</html>

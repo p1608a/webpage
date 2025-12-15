@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Add text or image watermark to your PDF documents. Free online PDF watermark tool.">
+    <title>Watermark PDF - Add Watermark to PDF Online Free</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23ec4899'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>P</text></svg>">
+
+    <style>
+        .tool-page {
+            padding-top: 120px;
+            min-height: 100vh;
+        }
+
+        .tool-header {
+            text-align: center;
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .tool-header h1 {
+            font-size: var(--font-size-4xl);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .tool-header p {
+            font-size: var(--font-size-lg);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .tool-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: center;
+            margin-top: var(--spacing-xl);
+            flex-wrap: wrap;
+        }
+
+        .options-panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin-top: var(--spacing-xl);
+        }
+
+        .options-panel h4 {
+            margin-bottom: var(--spacing-lg);
+            font-size: var(--font-size-lg);
+        }
+
+        .option-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-lg);
+        }
+
+        .option-group {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .option-group label {
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .option-group input,
+        .option-group select {
+            width: 100%;
+            padding: var(--spacing-md);
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            font-family: var(--font-family);
+        }
+
+        .option-group input:focus,
+        .option-group select:focus {
+            outline: none;
+            border-color: #ec4899;
+        }
+
+        .color-input {
+            display: flex;
+            gap: var(--spacing-sm);
+            align-items: center;
+        }
+
+        .color-input input[type="color"] {
+            width: 50px;
+            height: 42px;
+            padding: 0;
+            border: none;
+            cursor: pointer;
+        }
+
+        .position-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-sm);
+        }
+
+        .position-btn {
+            padding: var(--spacing-md);
+            background: var(--bg-secondary);
+            border: 2px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            font-family: var(--font-family);
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+        }
+
+        .position-btn:hover {
+            border-color: #ec4899;
+        }
+
+        .position-btn.selected {
+            border-color: #ec4899;
+            background: rgba(236, 72, 153, 0.1);
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+
+    <header class="header">
+        <div class="container">
+            <a href="../index.html" class="logo">
+                <span class="logo-icon">📄</span>
+                <span>PDF Tools</span>
+            </a>
+            <nav class="nav" id="mainNav">
+                <a href="../index.html" class="nav-link">← All Tools</a>
+            </nav>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+        </div>
+    </header>
+
+    <main class="tool-page">
+        <div class="container">
+            <div class="tool-header">
+                <h1>Watermark PDF</h1>
+                <p>Add text watermark to your PDF documents.</p>
+            </div>
+
+            <div class="tool-content">
+                <div class="upload-zone" id="uploadZone">
+                    <div class="upload-icon" style="background: linear-gradient(135deg, #ec4899, #f472b6);">💧</div>
+                    <h3>Drop PDF file here</h3>
+                    <p>or click to browse</p>
+                    <input type="file" id="fileInput" accept=".pdf,application/pdf">
+                    <button class="btn btn-primary"
+                        style="background: linear-gradient(135deg, #ec4899, #f472b6);">Select PDF File</button>
+                </div>
+
+                <div class="file-list" id="fileList"></div>
+
+                <div class="options-panel hidden" id="optionsPanel">
+                    <h4>Watermark Settings</h4>
+
+                    <div class="option-group">
+                        <label>Watermark Text</label>
+                        <input type="text" id="watermarkText" placeholder="CONFIDENTIAL" value="CONFIDENTIAL">
+                    </div>
+
+                    <div class="option-row">
+                        <div class="option-group">
+                            <label>Font Size</label>
+                            <select id="fontSize">
+                                <option value="30">Small (30)</option>
+                                <option value="50" selected>Medium (50)</option>
+                                <option value="70">Large (70)</option>
+                                <option value="100">Extra Large (100)</option>
+                            </select>
+                        </div>
+                        <div class="option-group">
+                            <label>Opacity</label>
+                            <select id="opacity">
+                                <option value="0.1">Very Light (10%)</option>
+                                <option value="0.3" selected>Light (30%)</option>
+                                <option value="0.5">Medium (50%)</option>
+                                <option value="0.7">Dark (70%)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="option-group">
+                        <label>Position</label>
+                        <div class="position-grid">
+                            <button class="position-btn" data-position="top-left">Top Left</button>
+                            <button class="position-btn" data-position="top-center">Top Center</button>
+                            <button class="position-btn" data-position="top-right">Top Right</button>
+                            <button class="position-btn" data-position="center-left">Center Left</button>
+                            <button class="position-btn selected" data-position="center">Center</button>
+                            <button class="position-btn" data-position="center-right">Center Right</button>
+                            <button class="position-btn" data-position="bottom-left">Bottom Left</button>
+                            <button class="position-btn" data-position="bottom-center">Bottom Center</button>
+                            <button class="position-btn" data-position="bottom-right">Bottom Right</button>
+                        </div>
+                    </div>
+
+                    <div class="option-group">
+                        <label>Color</label>
+                        <div class="color-input">
+                            <input type="color" id="color" value="#888888">
+                            <span id="colorLabel" style="color: var(--text-muted);">#888888</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons hidden" id="actionButtons">
+                    <button class="btn btn-primary btn-lg" id="watermarkBtn"
+                        style="background: linear-gradient(135deg, #ec4899, #f472b6);">
+                        Add Watermark
+                    </button>
+                    <button class="btn btn-secondary" id="clearBtn">Clear</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 PDF Tools.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../scripts/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const optionsPanel = document.getElementById('optionsPanel');
+            const actionButtons = document.getElementById('actionButtons');
+            let position = 'center';
+
+            currentUploader = new FileUploader('uploadZone', {
+                maxFiles: 1,
+                acceptedTypes: ['application/pdf'],
+                onFilesChange: (files) => {
+                    renderFileList(files, 'fileList', currentUploader);
+                    const show = files.length > 0;
+                    optionsPanel.classList.toggle('hidden', !show);
+                    actionButtons.classList.toggle('hidden', !show);
+                }
+            });
+
+            document.querySelectorAll('.position-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.position-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    position = btn.dataset.position;
+                });
+            });
+
+            document.getElementById('color').addEventListener('input', (e) => {
+                document.getElementById('colorLabel').textContent = e.target.value;
+            });
+
+            document.getElementById('watermarkBtn').addEventListener('click', async () => {
+                const files = currentUploader.getFiles();
+                if (files.length === 0) return;
+
+                showProcessing('Adding watermark...');
+
+                try {
+                    const result = await processFiles('/watermark', files, {
+                        text: document.getElementById('watermarkText').value,
+                        fontSize: document.getElementById('fontSize').value,
+                        opacity: document.getElementById('opacity').value,
+                        position: position,
+                        color: document.getElementById('color').value
+                    });
+                    showSuccess('Watermark added successfully!', result.fileId, result.filename);
+                } catch (error) {
+                    showError(error.message || 'Failed to add watermark');
+                }
+            });
+
+            document.getElementById('clearBtn').addEventListener('click', () => currentUploader.clearFiles());
+        });
+    </script>
+</body>
+
+</html>
