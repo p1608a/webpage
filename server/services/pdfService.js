@@ -116,9 +116,6 @@ async function splitPDF(file, options = {}) {
 // ==========================================
 // COMPRESS PDF
 // ==========================================
-// ==========================================
-// COMPRESS PDF
-// ==========================================
 async function compressPDF(file, options = {}) {
     const pdfBytes = fs.readFileSync(file.path);
     const originalSize = pdfBytes.length;
@@ -290,57 +287,43 @@ async function addWatermark(file, options = {}) {
 // ==========================================
 // PROTECT PDF (Add Password)
 // ==========================================
-// ==========================================
-// PROTECT PDF (Add Password)
-// ==========================================
 async function protectPDF(file, options = {}) {
     const { password } = options;
+    if (!password) throw new Error('Password is required');
 
-    if (!password) {
-        throw new Error('Password is required to protect PDF');
-    }
+    const pdfBytes = fs.readFileSync(file.path);
+    // Load without encryption to modify it
+    const pdf = await PDFDocument.load(pdfBytes, { ignoreEncryption: true });
 
-    try {
-        const pdfBytes = fs.readFileSync(file.path);
-        const pdf = await PDFDocument.load(pdfBytes, { ignoreEncryption: true });
+    const protectedBytes = await pdf.save({
+        userPassword: password,
+        ownerPassword: password,
+        permissions: {
+            printing: 'highResolution',
+            modifying: false,
+            copying: false,
+            annotating: false,
+            fillingForms: false,
+            contentAccessibility: false,
+            documentAssembly: false
+        }
+    });
 
-        // Use pdf-lib's built-in encryption
-        const protectedBytes = await pdf.save({
-            userPassword: password,
-            ownerPassword: password,
-            permissions: {
-                printing: 'highResolution',
-                modifying: false,
-                copying: false,
-                annotating: false,
-                fillingForms: false,
-                contentAccessibility: false,
-                documentAssembly: false
-            }
-        });
-
-        return saveOutput(protectedBytes, file.originalname, '_protected');
-    } catch (error) {
-        throw new Error(`Failed to protect PDF: ${error.message}`);
-    }
+    return saveOutput(protectedBytes, file.originalname, '_protected');
 }
 
 // ==========================================
 // UNLOCK PDF (Remove Password)
 // ==========================================
 async function unlockPDF(file, options = {}) {
+    const { password } = options;
+    if (!password) throw new Error('Password is required to unlock PDF');
+
     const pdfBytes = fs.readFileSync(file.path);
 
-    // Try to load with password if provided
-    const loadOptions = {};
-
-    if (options.password) {
-        loadOptions.password = options.password;
-    } else {
-        loadOptions.ignoreEncryption = true;
-    }
-
-    const pdf = await PDFDocument.load(pdfBytes, loadOptions);
+    // Load with password - this decrypts it
+    // If password is wrong, this will throw "Incorrect password"
+    const pdf = await PDFDocument.load(pdfBytes, { password });
 
     // Re-save without encryption
     const unlockedBytes = await pdf.save();
