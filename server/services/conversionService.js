@@ -147,6 +147,7 @@ async function imagesToPdf(files, options = {}) {
 }
 
 // ==========================================
+// ==========================================
 // WORD TO PDF
 // ==========================================
 async function wordToPdf(file) {
@@ -158,7 +159,17 @@ async function wordToPdf(file) {
     try {
         // Extract text from Word document using mammoth
         const result = await mammoth.extractRawText({ path: file.path });
-        const text = result.value || '';
+        let text = result.value || '';
+
+        // Sanitize text to remove characters not supported by WinAnsi encoding
+        // Replace common problematic characters
+        text = text
+            .replace(/[\u2018\u2019]/g, "'") // Smart quotes
+            .replace(/[\u201C\u201D]/g, '"') // Smart double quotes
+            .replace(/[\u2013\u2014]/g, '-') // Dashes
+            .replace(/\u2026/g, '...')       // Ellipsis
+            .replace(/\u2248/g, '~')         // Approx equal (≈)
+            .replace(/[^\x00-\x7F]/g, '');   // Remove other non-ASCII characters
 
         const pdf = await PDFDocument.create();
         const font = await pdf.embedFont(StandardFonts.Helvetica);
@@ -248,7 +259,18 @@ async function pdfToWord(file) {
         // Read and parse PDF to extract text using pdf-parse
         const pdfBuffer = fs.readFileSync(file.path);
         const pdfParse = require('pdf-parse');
-        const pdfData = await pdfParse(pdfBuffer);
+
+        let pdfData;
+        // Handle potential import differences
+        if (typeof pdfParse === 'function') {
+            pdfData = await pdfParse(pdfBuffer);
+        } else if (typeof pdfParse.default === 'function') {
+            pdfData = await pdfParse.default(pdfBuffer);
+        } else {
+            // Fallback
+            pdfData = await pdfParse(pdfBuffer);
+        }
+
         const text = pdfData.text || '';
 
         // Split text into paragraphs

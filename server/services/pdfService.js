@@ -116,38 +116,71 @@ async function splitPDF(file, options = {}) {
 // ==========================================
 // COMPRESS PDF
 // ==========================================
+// ==========================================
+// COMPRESS PDF
+// ==========================================
 async function compressPDF(file, options = {}) {
     const pdfBytes = fs.readFileSync(file.path);
     const originalSize = pdfBytes.length;
+    const fileId = uuidv4();
+    const baseName = path.basename(file.originalname, '.pdf');
+    const filename = `${baseName}_compressed.pdf`;
+    const outputPath = path.join(outputDir, `${fileId}-${filename}`);
 
-    // Load and re-save with compression options
-    const pdf = await PDFDocument.load(pdfBytes, { ignoreEncryption: true });
+    try {
+        // Try using muhammara for better compression (repacking)
+        const muhammara = require('muhammara');
 
-    // Remove metadata to reduce size
-    pdf.setTitle('');
-    pdf.setAuthor('');
-    pdf.setSubject('');
-    pdf.setKeywords([]);
-    pdf.setProducer('PDF Tools');
-    pdf.setCreator('PDF Tools');
+        // Create a new PDF and copy pages (repacking often reduces size)
+        const pdfWriter = muhammara.createWriter(outputPath, {
+            version: muhammara.ePDFVersion17
+        });
 
-    // Save with object streams enabled for better compression
-    const compressedBytes = await pdf.save({
-        useObjectStreams: true,
-        addDefaultPage: false
-    });
+        const copyingContext = pdfWriter.createPDFCopyingContext(file.path);
+        const pageCount = copyingContext.getSourceDocumentParser().getPagesCount();
 
-    const compressedSize = compressedBytes.length;
-    const reduction = Math.round((1 - compressedSize / originalSize) * 100);
+        for (let i = 0; i < pageCount; i++) {
+            copyingContext.appendPDFPageFromPDF(i);
+        }
 
-    const result = saveOutput(compressedBytes, file.originalname, '_compressed');
+        pdfWriter.end();
 
-    return {
-        ...result,
-        originalSize,
-        compressedSize,
-        reduction: `${reduction}%`
-    };
+        const compressedBytes = fs.readFileSync(outputPath);
+        const compressedSize = compressedBytes.length;
+        const reduction = Math.round((1 - compressedSize / originalSize) * 100);
+
+        return {
+            fileId,
+            filename,
+            path: outputPath,
+            originalSize,
+            compressedSize,
+            reduction: `${reduction}%`
+        };
+    } catch (error) {
+        // Fallback to pdf-lib if muhammara fails
+        console.error('Muhammara compression failed, falling back to pdf-lib:', error);
+
+        const pdf = await PDFDocument.load(pdfBytes, { ignoreEncryption: true });
+
+        // Remove metadata
+        pdf.setTitle('');
+        pdf.setAuthor('');
+        pdf.setSubject('');
+        pdf.setKeywords([]);
+        pdf.setProducer('PDF Tools');
+        pdf.setCreator('PDF Tools');
+
+        const compressedBytes = await pdf.save({
+            useObjectStreams: true,
+            addDefaultPage: false
+        });
+
+        const compressedSize = compressedBytes.length;
+        const reduction = Math.round((1 - compressedSize / originalSize) * 100);
+
+        return saveOutput(compressedBytes, file.originalname, '_compressed');
+    }
 }
 
 // ==========================================
@@ -257,6 +290,9 @@ async function addWatermark(file, options = {}) {
 // ==========================================
 // PROTECT PDF (Add Password)
 // ==========================================
+// ==========================================
+// PROTECT PDF (Add Password)
+// ==========================================
 async function protectPDF(file, options = {}) {
     const { password } = options;
 
@@ -264,35 +300,28 @@ async function protectPDF(file, options = {}) {
         throw new Error('Password is required to protect PDF');
     }
 
-    const fileId = uuidv4();
-    const baseName = path.basename(file.originalname, '.pdf');
-    const filename = `${baseName}_protected.pdf`;
-    const outputPath = path.join(outputDir, `${fileId}-${filename}`);
-
     try {
-        const muhammara = require('muhammara');
+        const pdfBytes = fs.readFileSync(file.path);
+        const pdf = await PDFDocument.load(pdfBytes, { ignoreEncryption: true });
 
-        // Create protected PDF with password
-        const writer = muhammara.createWriterToModify(
-            file.path,
-            {
-                modifiedFilePath: outputPath,
-                userPassword: password,
-                ownerPassword: password,
-                userProtectionFlag: 4 // Allow printing only
+        // Use pdf-lib's built-in encryption
+        const protectedBytes = await pdf.save({
+            userPassword: password,
+            ownerPassword: password,
+            permissions: {
+                printing: 'highResolution',
+                modifying: false,
+                copying: false,
+                annotating: false,
+                fillingForms: false,
+                contentAccessibility: false,
+                documentAssembly: false
             }
-        );
+        });
 
-        writer.end();
-
-        return {
-            fileId,
-            filename,
-            path: outputPath
-        };
+        return saveOutput(protectedBytes, file.originalname, '_protected');
     } catch (error) {
-        // Fallback: If muhammara fails, inform the user
-        throw new Error(`Failed to protect PDF: ${error.message}. Make sure the PDF is not corrupted.`);
+        throw new Error(`Failed to protect PDF: ${error.message}`);
     }
 }
 
@@ -303,12 +332,12 @@ async function unlockPDF(file, options = {}) {
     const pdfBytes = fs.readFileSync(file.path);
 
     // Try to load with password if provided
-    const loadOptions = {
-        ignoreEncryption: true
-    };
+    const loadOptions = {};
 
     if (options.password) {
         loadOptions.password = options.password;
+    } else {
+        loadOptions.ignoreEncryption = true;
     }
 
     const pdf = await PDFDocument.load(pdfBytes, loadOptions);
