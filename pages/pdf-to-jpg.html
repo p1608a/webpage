@@ -15,6 +15,11 @@
     <link rel="icon" type="image/svg+xml"
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%238b5cf6'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>P</text></svg>">
 
+    <!-- PDF.js and JSZip -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
     <style>
         .tool-page {
             padding-top: 120px;
@@ -83,6 +88,33 @@
             color: var(--text-primary);
             font-size: var(--font-size-base);
         }
+
+        #progressContainer {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: var(--bg-secondary);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #8b5cf6, #a78bfa);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 5px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
     </style>
 </head>
 
@@ -127,11 +159,18 @@
                     <div class="option-group">
                         <label>Output Quality</label>
                         <select id="quality">
-                            <option value="70">Good (70%)</option>
-                            <option value="85" selected>Better (85%)</option>
-                            <option value="100">Best (100%)</option>
+                            <option value="0.7">Good (70%)</option>
+                            <option value="0.85" selected>Better (85%)</option>
+                            <option value="1.0">Best (100%)</option>
                         </select>
                     </div>
+                </div>
+
+                <div id="progressContainer">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">Processing...</div>
                 </div>
 
                 <div class="action-buttons hidden" id="actionButtons">
@@ -155,9 +194,15 @@
 
     <script src="../scripts/main.js"></script>
     <script>
+        // Set up PDF.js worker
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
         document.addEventListener('DOMContentLoaded', () => {
             const optionsPanel = document.getElementById('optionsPanel');
             const actionButtons = document.getElementById('actionButtons');
+            const progressContainer = document.getElementById('progressContainer');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
 
             currentUploader = new FileUploader('uploadZone', {
                 maxFiles: 1,
@@ -167,6 +212,7 @@
                     const show = files.length > 0;
                     optionsPanel.classList.toggle('hidden', !show);
                     actionButtons.classList.toggle('hidden', !show);
+                    progressContainer.style.display = 'none';
                 }
             });
 
@@ -174,19 +220,72 @@
                 const files = currentUploader.getFiles();
                 if (files.length === 0) return;
 
-                showProcessing('Converting PDF to images...');
+                const file = files[0];
+                const quality = parseFloat(document.getElementById('quality').value);
+
+                // UI Updates
+                actionButtons.classList.add('hidden');
+                progressContainer.style.display = 'block';
+                progressFill.style.width = '0%';
+                progressText.textContent = 'Initializing...';
 
                 try {
-                    const result = await processFiles('/pdf-to-jpg', files, {
-                        quality: document.getElementById('quality').value
-                    });
-                    showSuccess('PDF converted to images!', result.fileId, result.filename);
+                    // Read file
+                    const arrayBuffer = await file.arrayBuffer();
+                    const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+                    const totalPages = pdf.numPages;
+                    const zip = new JSZip();
+                    const imgFolder = zip.folder("images");
+
+                    for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+                        progressText.textContent = `Processing page ${pageNum} of ${totalPages}...`;
+                        const progress = ((pageNum - 1) / totalPages) * 100;
+                        progressFill.style.width = `${progress}%`;
+
+                        const page = await pdf.getPage(pageNum);
+                        const viewport = page.getViewport({ scale: 2.0 }); // High quality scale
+
+                        const canvas = document.createElement('canvas');
+                        const context = canvas.getContext('2d');
+                        canvas.height = viewport.height;
+                        canvas.width = viewport.width;
+
+                        await page.render({
+                            canvasContext: context,
+                            viewport: viewport
+                        }).promise;
+
+                        // Convert to Blob
+                        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', quality));
+                        const fileName = `page_${pageNum.toString().padStart(3, '0')}.jpg`;
+                        imgFolder.file(fileName, blob);
+                    }
+
+                    progressText.textContent = 'Creating ZIP file...';
+                    progressFill.style.width = '100%';
+
+                    const content = await zip.generateAsync({ type: "blob" });
+                    saveAs(content, `${file.name.replace('.pdf', '')}_images.zip`);
+
+                    // Reset UI
+                    progressText.textContent = 'Done! Download started.';
+                    setTimeout(() => {
+                        progressContainer.style.display = 'none';
+                        actionButtons.classList.remove('hidden');
+                    }, 3000);
+
                 } catch (error) {
-                    showError(error.message || 'Failed to convert PDF');
+                    console.error(error);
+                    progressContainer.style.display = 'none';
+                    actionButtons.classList.remove('hidden');
+                    showError('Failed to convert PDF: ' + error.message);
                 }
             });
 
-            document.getElementById('clearBtn').addEventListener('click', () => currentUploader.clearFiles());
+            document.getElementById('clearBtn').addEventListener('click', () => {
+                currentUploader.clearFiles();
+                progressContainer.style.display = 'none';
+            });
         });
     </script>
 </body>
