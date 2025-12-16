@@ -161,6 +161,27 @@
                             <p>Less compression, best quality</p>
                         </label>
                     </div>
+
+                    <div class="target-size-section"
+                        style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--glass-border);">
+                        <label class="checkbox-container"
+                            style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                            <input type="checkbox" id="targetSizeCheckbox"
+                                style="width: 1.25rem; height: 1.25rem; cursor: pointer;">
+                            <span style="font-weight: 500;">Compress to specific size</span>
+                        </label>
+                        <div class="target-size-input hidden" id="targetSizeInputContainer"
+                            style="margin-top: 1rem; margin-left: 1.75rem;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <input type="number" id="targetSizeInput" placeholder="e.g. 1024" class="form-input"
+                                    min="100"
+                                    style="width: 150px; padding: 0.5rem; border-radius: 0.5rem; border: 1px solid var(--glass-border); background: var(--bg-secondary); color: var(--text-primary);">
+                                <span class="unit" style="color: var(--text-muted);">KB</span>
+                            </div>
+                            <p style="font-size: 0.875rem; color: var(--text-muted); margin-top: 0.5rem;">We'll try to
+                                reach this size by adjusting quality.</p>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="action-buttons hidden" id="actionButtons">
@@ -189,6 +210,9 @@
             const actionButtons = document.getElementById('actionButtons');
             const compressBtn = document.getElementById('compressBtn');
             const clearBtn = document.getElementById('clearBtn');
+            const targetSizeCheckbox = document.getElementById('targetSizeCheckbox');
+            const targetSizeInputContainer = document.getElementById('targetSizeInputContainer');
+            const targetSizeInput = document.getElementById('targetSizeInput');
 
             let quality = 'medium';
 
@@ -209,6 +233,7 @@
 
             document.querySelectorAll('.quality-option').forEach(option => {
                 option.addEventListener('click', () => {
+                    if (targetSizeCheckbox.checked) return;
                     document.querySelectorAll('.quality-option').forEach(o => o.classList.remove('selected'));
                     option.classList.add('selected');
                     option.querySelector('input').checked = true;
@@ -216,14 +241,38 @@
                 });
             });
 
+            targetSizeCheckbox.addEventListener('change', () => {
+                if (targetSizeCheckbox.checked) {
+                    targetSizeInputContainer.classList.remove('hidden');
+                    document.querySelector('.quality-options').style.opacity = '0.5';
+                    document.querySelector('.quality-options').style.pointerEvents = 'none';
+                    targetSizeInput.focus();
+                } else {
+                    targetSizeInputContainer.classList.add('hidden');
+                    document.querySelector('.quality-options').style.opacity = '1';
+                    document.querySelector('.quality-options').style.pointerEvents = 'auto';
+                }
+            });
+
             compressBtn.addEventListener('click', async () => {
                 const files = currentUploader.getFiles();
                 if (files.length === 0) return;
 
+                if (targetSizeCheckbox.checked && !targetSizeInput.value) {
+                    showError('Please enter a target file size');
+                    targetSizeInput.focus();
+                    return;
+                }
+
                 showProcessing('Compressing your PDF...');
 
                 try {
-                    const result = await processFiles('/compress', files, { quality });
+                    const options = { quality };
+                    if (targetSizeCheckbox.checked && targetSizeInput.value) {
+                        options.targetSize = targetSizeInput.value;
+                    }
+
+                    const result = await processFiles('/compress', files, options);
                     const overlay = document.getElementById('processingOverlay');
                     if (overlay) {
                         overlay.innerHTML = `

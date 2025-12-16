@@ -1,7 +1,8 @@
-const { PDFDocument, degrees, rgb, StandardFonts } = require('pdf-lib');
+const { PDFDocument, degrees, rgb, StandardFonts, PDFName, PDFRawStream, PDFNumber } = require('pdf-lib');
 const fs = require('fs');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
+const sharp = require('sharp');
 
 const outputDir = path.join(__dirname, '..', 'output');
 
@@ -124,60 +125,124 @@ async function compressPDF(file, options = {}) {
     const filename = `${baseName}_compressed.pdf`;
     const outputPath = path.join(outputDir, `${fileId}-${filename}`);
 
-    try {
-        // Try using muhammara for better compression (repacking)
-        const muhammara = require('muhammara');
+    let quality = 70;
+    let resizeRatio = 1.0;
+    let targetSize = options.targetSize ? parseInt(options.targetSize) * 1024 : null; // KB to Bytes
 
-        // Create a new PDF and copy pages (repacking often reduces size)
-        const pdfWriter = muhammara.createWriter(outputPath, {
-            version: muhammara.ePDFVersion17
-        });
+    // Determine settings based on quality level
+    if (options.quality === 'low') { // Extreme
+        quality = 30;
+        resizeRatio = 0.5;
+    } else if (options.quality === 'high') { // High Quality
+        quality = 80;
+        resizeRatio = 1.0;
+    } else { // Balanced (medium)
+        quality = 60;
+        resizeRatio = 0.75;
+    }
 
-        const copyingContext = pdfWriter.createPDFCopyingContext(file.path);
-        const pageCount = copyingContext.getSourceDocumentParser().getPagesCount();
+    // Helper to perform compression
+    const performCompression = async (q, r) => {
+        const pdfDoc = await PDFDocument.load(pdfBytes, { ignoreEncryption: true });
+        const objects = pdfDoc.context.enumerateIndirectObjects();
+        let compressedCount = 0;
 
-        for (let i = 0; i < pageCount; i++) {
-            copyingContext.appendPDFPageFromPDF(i);
+        for (const [ref, obj] of objects) {
+            if (obj instanceof PDFRawStream) {
+                const dict = obj.dict;
+                const subtype = dict.get(PDFName.of('Subtype'));
+
+                if (subtype === PDFName.of('Image')) {
+                    const filter = dict.get(PDFName.of('Filter'));
+
+                    // Only handle JPEG (DCTDecode) for now as it's the most common source of bloat
+                    if (filter === PDFName.of('DCTDecode')) {
+                        try {
+                            const width = dict.get(PDFName.of('Width')).numberValue;
+                            const height = dict.get(PDFName.of('Height')).numberValue;
+                            const contents = obj.getContents();
+
+                            const newWidth = Math.max(1, Math.round(width * r));
+                            const newHeight = Math.max(1, Math.round(height * r));
+
+                            const compressedBuffer = await sharp(contents)
+                                .resize(newWidth, newHeight, { fit: 'inside' })
+                                .jpeg({ quality: q })
+                                .toBuffer();
+
+                            // Update the stream dictionary
+                            dict.set(PDFName.of('Width'), PDFNumber.of(newWidth));
+                            dict.set(PDFName.of('Height'), PDFNumber.of(newHeight));
+
+                            // Create a new stream with compressed data
+                            const newStream = pdfDoc.context.stream(compressedBuffer, {
+                                Type: 'XObject',
+                                Subtype: 'Image',
+                                Width: newWidth,
+                                Height: newHeight,
+                                BitsPerComponent: 8,
+                                ColorSpace: 'DeviceRGB', // Assuming RGB for JPEGs usually
+                                Filter: 'DCTDecode'
+                            });
+
+                            // Replace the object
+                            pdfDoc.context.assign(ref, newStream);
+                            compressedCount++;
+                        } catch (err) {
+                            console.warn('Failed to compress image:', err.message);
+                        }
+                    }
+                }
+            }
         }
 
-        pdfWriter.end();
-
-        const compressedBytes = fs.readFileSync(outputPath);
-        const compressedSize = compressedBytes.length;
-        const reduction = Math.round((1 - compressedSize / originalSize) * 100);
-
-        return {
-            fileId,
-            filename,
-            path: outputPath,
-            originalSize,
-            compressedSize,
-            reduction: `${reduction}%`
-        };
-    } catch (error) {
-        // Fallback to pdf-lib if muhammara fails
-        console.error('Muhammara compression failed, falling back to pdf-lib:', error);
-
-        const pdf = await PDFDocument.load(pdfBytes, { ignoreEncryption: true });
-
         // Remove metadata
-        pdf.setTitle('');
-        pdf.setAuthor('');
-        pdf.setSubject('');
-        pdf.setKeywords([]);
-        pdf.setProducer('PDF Tools');
-        pdf.setCreator('PDF Tools');
+        pdfDoc.setTitle('');
+        pdfDoc.setAuthor('');
+        pdfDoc.setSubject('');
+        pdfDoc.setKeywords([]);
+        pdfDoc.setProducer('PDF Tools');
+        pdfDoc.setCreator('PDF Tools');
 
-        const compressedBytes = await pdf.save({
-            useObjectStreams: true,
-            addDefaultPage: false
-        });
+        return await pdfDoc.save({ useObjectStreams: true });
+    };
 
-        const compressedSize = compressedBytes.length;
-        const reduction = Math.round((1 - compressedSize / originalSize) * 100);
+    let compressedBytes;
 
-        return saveOutput(compressedBytes, file.originalname, '_compressed');
+    if (targetSize) {
+        // Iterative compression for target size
+        // Start with balanced settings
+        quality = 70;
+        resizeRatio = 0.8;
+
+        for (let i = 0; i < 5; i++) { // Max 5 attempts
+            compressedBytes = await performCompression(quality, resizeRatio);
+            if (compressedBytes.length <= targetSize) {
+                break;
+            }
+            // Reduce quality and resize for next iteration
+            quality -= 15;
+            resizeRatio -= 0.15;
+            if (quality < 10) quality = 10;
+            if (resizeRatio < 0.2) resizeRatio = 0.2;
+        }
+    } else {
+        compressedBytes = await performCompression(quality, resizeRatio);
     }
+
+    fs.writeFileSync(outputPath, compressedBytes);
+
+    const compressedSize = compressedBytes.length;
+    const reduction = Math.round((1 - compressedSize / originalSize) * 100);
+
+    return {
+        fileId,
+        filename,
+        path: outputPath,
+        originalSize,
+        compressedSize,
+        reduction: `${reduction}%`
+    };
 }
 
 // ==========================================
