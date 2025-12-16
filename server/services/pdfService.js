@@ -357,24 +357,37 @@ async function protectPDF(file, options = {}) {
     if (!password) throw new Error('Password is required');
 
     const pdfBytes = fs.readFileSync(file.path);
-    // Load without encryption to modify it
-    const pdf = await PDFDocument.load(pdfBytes, { ignoreEncryption: true });
 
-    const protectedBytes = await pdf.save({
-        userPassword: password,
-        ownerPassword: password,
-        permissions: {
-            printing: 'highResolution',
-            modifying: false,
-            copying: false,
-            annotating: false,
-            fillingForms: false,
-            contentAccessibility: false,
-            documentAssembly: false
+    // Check if already encrypted
+    try {
+        // Load with ignoreEncryption to check status
+        const pdf = await PDFDocument.load(pdfBytes, { ignoreEncryption: true });
+        if (pdf.isEncrypted) {
+            throw new Error('This PDF is already password protected. Please unlock it first.');
         }
-    });
 
-    return saveOutput(protectedBytes, file.originalname, '_protected');
+        const protectedBytes = await pdf.save({
+            userPassword: password,
+            ownerPassword: password,
+            permissions: {
+                printing: 'highResolution',
+                modifying: false,
+                copying: false,
+                annotating: false,
+                fillingForms: false,
+                contentAccessibility: false,
+                documentAssembly: false
+            }
+        });
+
+        return saveOutput(protectedBytes, file.originalname, '_protected');
+    } catch (error) {
+        if (error.message.includes('already password protected')) {
+            throw error;
+        }
+        // If loading failed for other reasons (e.g. corrupt file)
+        throw new Error('Failed to process PDF: ' + error.message);
+    }
 }
 
 // ==========================================
@@ -382,17 +395,27 @@ async function protectPDF(file, options = {}) {
 // ==========================================
 async function unlockPDF(file, options = {}) {
     const { password } = options;
-    if (!password) throw new Error('Password is required to unlock PDF');
+    // Allow empty password if user wants to try unlocking without one (some PDFs have empty owner password)
+    // But if it fails, we'll ask for one.
 
     const pdfBytes = fs.readFileSync(file.path);
 
-    // Load with password - this decrypts it
-    // If password is wrong, this will throw "Incorrect password"
-    const pdf = await PDFDocument.load(pdfBytes, { password });
+    try {
+        // Load with password - this decrypts it
+        const pdf = await PDFDocument.load(pdfBytes, { password: password || '' });
 
-    // Re-save without encryption
-    const unlockedBytes = await pdf.save();
-    return saveOutput(unlockedBytes, file.originalname, '_unlocked');
+        // Re-save without encryption
+        const unlockedBytes = await pdf.save();
+        return saveOutput(unlockedBytes, file.originalname, '_unlocked');
+    } catch (error) {
+        if (error.message.includes('Incorrect password')) {
+            throw new Error('Incorrect password. Please check your password and try again.');
+        }
+        if (error.message.includes('Password is required')) { // pdf-lib might throw this
+            throw new Error('This PDF is password protected. Please enter the password.');
+        }
+        throw new Error('Failed to unlock PDF: ' + error.message);
+    }
 }
 
 module.exports = {
